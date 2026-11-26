@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
   <title>Central de Sites · Cantinho do Maná</title>
-  <link rel="stylesheet" href="./site.css?v=painel-1">
-  <link rel="stylesheet" href="./admin.css?v=painel-1">
+  <link rel="stylesheet" href="./site.css?v=painel-2">
+  <link rel="stylesheet" href="./admin.css?v=painel-2">
 </head>
 <body>
   <header class="top">
@@ -27,6 +27,23 @@
       <label>Senha <input name="password" type="password" autocomplete="current-password" required></label>
       <button class="btn green">Entrar</button>
     </form>
+    <div id="reports" class="tool-grid" hidden>
+      <section class="panel">
+        <h2>Visitas</h2>
+        <label>Período <select id="period"><option value="7">Últimos 7 dias</option><option value="14">Últimos 14 dias</option><option value="30">Últimos 30 dias</option></select></label>
+        <p id="analytics-status" role="status"></p>
+        <div id="analytics-results" hidden>
+          <div class="summary" id="metrics"></div>
+          <h3>Visualizações por dia</h3><ul id="chart" class="visit-chart"></ul>
+          <h3>Seções mais vistas</h3><ol id="paths"></ol>
+        </div>
+      </section>
+      <section class="panel"><h2>Produtos mais visualizados</h2><ol id="product-views"></ol></section>
+      <section class="panel"><h2>Produtos mais vendidos</h2><p>Unidades registradas no período.</p><ol id="product-sales"></ol>
+        <form id="sale" class="tool-form"><label>Produto <select name="product" required></select></label><label>Unidades vendidas <input name="quantity" type="number" min="1" max="999" value="1" required></label><button class="btn green">Registrar venda</button><p id="sale-status" role="status"></p></form>
+      </section>
+    </div>
+    <section id="demo-preview" class="panel" hidden><h2>Prévia do cardápio</h2><p>Somente produtos marcados para aparecer na vitrine.</p><ul id="demo-products" class="demo-products"></ul></section>
     <div id="catalog" hidden>
       <div class="summary" id="summary"></div>
       <div class="panel">
@@ -43,16 +60,6 @@
       </div>
     </div>
     <div id="tools" class="tool-grid" hidden>
-      <section class="panel">
-        <h2>Visitas</h2>
-        <label>Período <select id="period"><option value="7">Últimos 7 dias</option><option value="14">Últimos 14 dias</option><option value="30">Últimos 30 dias</option></select></label>
-        <p id="analytics-status" role="status"></p>
-        <div id="analytics-results" hidden>
-          <div class="summary" id="metrics"></div>
-          <h3>Visualizações por dia</h3><ul id="chart" class="visit-chart"></ul>
-          <h3>Seções mais vistas</h3><ol id="paths"></ol>
-        </div>
-      </section>
       <form class="panel tool-form" id="theme">
         <h2>Aparência da vitrine</h2>
         <label>Cor principal <input name="primary_color" type="color" value="#942c20"></label>
@@ -84,6 +91,6 @@
       <div class="wide editor-actions"><button class="btn danger" type="button" id="delete" hidden>Excluir produto</button><button class="btn green" type="submit">Salvar produto</button></div>
     </form>
   </dialog>
-  <script type="module" src="./admin.js?v=painel-1"></script>
+  <script type="module" src="./admin.js?v=painel-2"></script>
 </body>
 </html>

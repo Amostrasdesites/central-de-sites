@@ -86,3 +86,7 @@ body { background:#f6f7fb;color:#201d37;--cream:#f6f7fb;--paper:#fff;--ink:#201d
 .example-link{margin-block:1rem}
 .theme-preview{display:grid;gap:6px;padding:14px;border:2px solid;border-radius:10px}
 .theme-preview span{padding:5px 8px;border-radius:5px;color:white;justify-self:start}
+
+#reports{align-items:start} #reports ol{padding-inline-start:1.25rem} #sale{margin-top:1rem} .demo-products{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:.3rem 1.4rem;padding-inline-start:1.25rem} #demo-preview{margin-bottom:1rem} #demo-preview p{margin-block:.4rem}
+
+.demo-products{max-height:11rem;overflow:auto} #reports .panel{min-width:0}

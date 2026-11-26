@@ -1,5 +1,5 @@
-import {element} from './catalog.js?v=painel-1';
-import {demo, changePassword, loadAnalytics, loadTheme, saveTheme} from './repository.js?v=painel-1';
+import {element} from './catalog.js?v=painel-2';
+import {demo, changePassword, loadAnalytics, loadTheme, saveTheme, productRankings, registerSale} from './repository.js?v=painel-2';
 
 const $ = id => document.getElementById(id);
 const number = new Intl.NumberFormat('pt-BR');
@@ -19,6 +19,7 @@ async function analytics() {
   const version = ++revision;
   const status = $('analytics-status');
   const results = $('analytics-results');
+  void rankings(version);
   status.textContent = 'Carregando…';
   results.hidden = true;
   try {
@@ -72,10 +73,37 @@ $('password').addEventListener('submit', event=>operation(event,$('password-stat
   form.reset();
   if (active) $('password-status').textContent = 'Senha alterada.';
 }));
+function listRanking(id, rows, empty) {
+  $(id).replaceChildren(...(rows.length ? rows.map(row=>element('li',row.name+' · '+number.format(row.total))) : [element('li',empty)]));
+}
+async function rankings(version) {
+  try {
+    const {product_views,product_sales}=await productRankings(Number($('period').value));
+    if (!active || version!==revision) return;
+    listRanking('product-views',product_views,'Nenhuma visualização de produto neste período.');
+    listRanking('product-sales',product_sales,'Nenhuma venda registrada neste período.');
+  } catch {
+    if (!active || version!==revision) return;
+    listRanking('product-views',[],'Conecte as métricas de produtos ao banco.');
+    listRanking('product-sales',[],'Conecte o registro de vendas ao banco.');
+  }
+}
+export function syncProducts(products) {
+  const select=$('sale').elements.namedItem('product');
+  select.replaceChildren(...products.map(row=>new Option(row.name,row.id)));
+  $('sale').querySelector('button').disabled=!products.length;
+}
+$('sale').addEventListener('submit',event=>operation(event,$('sale-status'),async form=>{
+  const {product,quantity}=Object.fromEntries(new FormData(form));
+  await registerSale(product,Number(quantity));
+  if (active) $('sale-status').textContent='Venda registrada.';
+  void rankings(revision);
+}));
 export function showTools() {
   active = true;
   $('password').hidden = demo;
   $('tools').hidden = false;
+  $('reports').hidden = false;
   $('theme').querySelector('button').disabled = true;
   void analytics();
   loadTheme().then(theme=>{
@@ -89,6 +117,8 @@ export function hideTools() {
   active = false;
   revision++;
   $('tools').hidden = true;
+  $('reports').hidden = true;
+  $('sale-status').textContent = '';
   $('analytics-results').hidden = true;
   $('password').reset();
   $('password-status').textContent = '';

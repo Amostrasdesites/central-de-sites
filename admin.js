@@ -1,6 +1,6 @@
-import {hideTools, showTools} from './panel-tools.js?v=painel-1';
-import {categories, element, imageSource, money, normalize, standardTags} from './catalog.js?v=painel-1';
-import {configured, demo, deleteProduct, listProducts, login, logout, saveProduct, uploadPhoto} from './repository.js?v=painel-1';
+import {hideTools, showTools, syncProducts} from './panel-tools.js?v=painel-2';
+import {categories, element, imageSource, money, normalize, standardTags} from './catalog.js?v=painel-2';
+import {configured, demo, deleteProduct, listProducts, login, logout, saveProduct, uploadPhoto} from './repository.js?v=painel-2';
 
 const $ = selector => document.querySelector(selector);
 const form = $('#product-form');
@@ -54,6 +54,11 @@ async function refresh() {
     return stat;
   }));
   render();
+  syncProducts(products);
+  if (demo) {
+    $('#demo-preview').hidden = false;
+    $('#demo-products').replaceChildren(...products.filter(product=>product.active).map(product=>element('li',product.name+' · '+money(product.price_cents))));
+  }
 }
 
 function openEditor(product) {
@@ -177,7 +182,7 @@ form.addEventListener('submit', event => {
     const file = field('image').files[0];
     if (file) product.image = await uploadPhoto(file);
     await saveProduct(product, Boolean(current));
-  }, 'Produto salvo.');
+  }, field('active').checked ? 'Produto salvo.' : 'Produto ocultado.');
 });
 $('#delete').addEventListener('click', event => {
   if (current && confirm('Excluir “' + current.name + '” do catálogo?')) {

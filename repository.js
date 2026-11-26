@@ -4,6 +4,7 @@ import {originalCatalog} from './catalog-data.js';
 export const configured = Boolean(config.supabaseUrl && config.publishableKey);
 export const demo = new URLSearchParams(location.search).get('demo') === '1';
 let sample;
+let sampleSales = [];
 let sampleTheme = {primary_color:'#942c20',secondary_color:'#2d482f',font:'system-ui'};
 let session = null;
 
@@ -58,6 +59,7 @@ export async function listProducts(privateFields = false) {
       const {originalCatalog: source} = await import('https://amostrasdesites.github.io/Cantinho_do_Man-/assets/js/catalog-data.js')
         .catch(()=>({originalCatalog}));
       sample = source.map(product=>({...product,cost_cents:null}));
+      sampleSales = sample.slice(0,3).map((row,index)=>({id:row.id,name:row.name,total:[16,11,8][index]}));
     }
     return structuredClone(sample);
   }
@@ -118,6 +120,23 @@ export async function saveTheme(theme) {
   if (rows.length !== 1) throw new Error('Aparência indisponível.');
 }
 
+export function productRankings(days) {
+  if (demo) {
+    const product_views=(sample??[]).slice(0,5).map((row,index)=>({name:row.name,total:(6-index)*days}));
+    const product_sales=sampleSales.map(row=>({name:sample.find(product=>product.id===row.id)?.name??row.name,total:row.total})).sort((a,b)=>b.total-a.total);
+    return Promise.resolve({product_views,product_sales});
+  }
+  return adminRequest('/rest/v1/rpc/store_product_rankings','POST',{p_days:days});
+}
+export function registerSale(id,quantity) {
+  if (demo) {
+    const existing=sampleSales.find(row=>row.id===id);
+    if (existing) existing.total+=quantity;
+    else sampleSales.push({id,name:sample.find(row=>row.id===id)?.name,total:quantity});
+    return Promise.resolve();
+  }
+  return adminRequest('/rest/v1/rpc/store_record_sale','POST',{p_product:id,p_quantity:quantity});
+}
 export function loadAnalytics(days) {
   if (demo) {
     const series=Array.from({length:days},(_,index)=>({day:new Date(Date.now()-(days-index-1)*86400000).toISOString().slice(0,10),views:18+((index*23)%31)}));
