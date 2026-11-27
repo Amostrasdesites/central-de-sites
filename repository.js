@@ -58,6 +58,7 @@ export async function logout() {
   demo = false;
   sample = undefined;
   sampleSales = [];
+  sampleOrders = [];
   sampleTheme = {primary_color:'#942c20',secondary_color:'#2d482f',font:'system-ui'};
   const token = session?.access_token;
   session = null;
@@ -134,7 +135,16 @@ export async function saveTheme(theme) {
 export function productRankings(days) {
   if (demo) {
     const product_views=(sample??[]).slice(0,5).map((row,index)=>({name:row.name,total:(6-index)*days}));
-    const product_sales=sampleSales.map(row=>({name:sample.find(product=>product.id===row.id)?.name??row.name,total:row.total})).sort((a,b)=>b.total-a.total);
+    const totals = new Map(sampleSales.map(row=>[row.id,{...row}]));
+    for (const order of sampleOrders) {
+      if (order.payment!=='paid' || order.delivery==='canceled') continue;
+      for (const item of order.items) {
+        const row=totals.get(item.id)??{id:item.id,name:item.name,total:0};
+        row.total+=item.quantity;
+        totals.set(item.id,row);
+      }
+    }
+    const product_sales=Array.from(totals.values(),row=>({name:sample.find(product=>product.id===row.id)?.name??row.name,total:row.total})).sort((a,b)=>b.total-a.total).slice(0,10);
     return Promise.resolve({product_views,product_sales});
   }
   return adminRequest('/rest/v1/rpc/store_product_rankings','POST',{p_days:days});
@@ -176,4 +186,20 @@ export async function changePassword(current,password) {
   }
   await request('/auth/v1/logout','POST',{},fresh.access_token).catch(()=>{});
   endSession('Senha alterada. Entre com a nova senha.');
+}
+
+let sampleOrders = [];
+
+export function listOrders() {
+  if (demo) return Promise.resolve(structuredClone(sampleOrders));
+  return adminRequest('/rest/v1/store_orders?select=*&order=number.desc&limit=200');
+}
+export async function saveOrder(order) {
+  if (demo) {
+    const previous=sampleOrders.find(row=>row.id===order.id);
+    const stored={...order,number:previous?.number??sampleOrders.length+1,created_at:previous?.created_at??new Date().toISOString()};
+    sampleOrders=[stored,...sampleOrders.filter(row=>row.id!==stored.id)];
+    return stored;
+  }
+  return adminRequest('/rest/v1/rpc/store_save_order','POST',{p_order:order});
 }

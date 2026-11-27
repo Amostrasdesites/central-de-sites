@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
   <title>Central de Sites · Cantinho do Maná</title>
-  <link rel="stylesheet" href="./site.css?v=painel-3">
-  <link rel="stylesheet" href="./admin.css?v=painel-3">
+  <link rel="stylesheet" href="./site.css?v=painel-4">
+  <link rel="stylesheet" href="./admin.css?v=painel-4">
 </head>
 <body>
   <main id="gate" class="gate">
@@ -29,7 +29,7 @@
     <aside class="rail">
       <div class="wordmark"><span class="brand-symbol" aria-hidden="true">C</span> Central de Sites</div>
       <div class="project"><span>PROJETO</span><strong>Cantinho do Maná</strong></div>
-      <nav aria-label="Seções do painel"><a href="#reports">Visitas e vendas</a><a href="#catalog">Produtos</a><a href="#tools">Aparência</a></nav>
+      <nav aria-label="Seções do painel"><a href="#reports">Visitas e vendas</a><a href="#orders">Pedidos</a><a href="#catalog">Produtos</a><a href="#tools">Aparência</a></nav>
       <div class="rail-actions"><a href="https://amostrasdesites.github.io/Cantinho_do_Man-/">Ver vitrine</a><button id="logout" type="button">Sair</button></div>
     </aside>
     <main class="admin dashboard">
@@ -48,10 +48,15 @@
         </div>
       </section>
       <section class="panel"><h2>Produtos mais visualizados</h2><ol id="product-views"></ol></section>
-      <section class="panel"><h2>Produtos mais vendidos</h2><p>Unidades registradas no período.</p><ol id="product-sales"></ol>
-        <form id="sale" class="tool-form"><label>Produto <select name="product" required></select></label><label>Unidades vendidas <input name="quantity" type="number" min="1" max="999" value="1" required></label><button class="btn green">Registrar venda</button><p id="sale-status" role="status"></p></form>
+      <section class="panel"><h2>Produtos mais vendidos</h2><p>Unidades registradas e pedidos pagos no período.</p><ol id="product-sales"></ol>
+        <form id="sale" class="tool-form"><label>Produto <select name="product" required></select></label><label>Unidades vendidas <input name="quantity" type="number" min="1" max="999" value="1" required></label><button class="btn green">Registrar venda avulsa</button><p id="sale-status" role="status"></p></form>
       </section>
     </div>
+    <section id="orders" class="panel order-panel" hidden>
+      <div class="orders-heading"><div><h2>Pedidos</h2><p>Registre vendas e acompanhe pagamentos e entregas.</p></div><button type="button" class="btn" id="new-order">+ Novo pedido</button></div>
+      <p id="orders-status" role="status"></p>
+      <div class="table-wrap"><table><thead><tr><th>Pedido</th><th>Cliente</th><th>Total</th><th>Pagamento</th><th>Entrega</th><th>Ações</th></tr></thead><tbody id="orders-rows"></tbody></table></div>
+    </section>
     <section id="demo-preview" class="panel" hidden><h2>Prévia do cardápio</h2><p>Somente produtos marcados para aparecer na vitrine.</p><ul id="demo-products" class="demo-products"></ul></section>
     <div id="catalog" hidden>
       <h2>Catálogo de produtos</h2>
@@ -102,6 +107,25 @@
       <div class="wide editor-actions"><button class="btn danger" type="button" id="delete" hidden>Excluir produto</button><button class="btn green" type="submit">Salvar produto</button></div>
     </form>
   </dialog>
-  <script type="module" src="./admin.js?v=painel-3"></script>
+  <dialog id="order-editor" aria-labelledby="order-title">
+    <form id="order-form" class="editor order-form">
+      <div class="editor-head"><h2 id="order-title">Novo pedido</h2><button class="btn light" type="button" id="close-order">Fechar</button></div>
+      <label>Cliente <input name="customer" autocomplete="off" required maxlength="100"></label>
+      <label>Telefone do cliente <input name="phone" type="tel" inputmode="tel" autocomplete="off" required maxlength="24"></label>
+      <label>Pagamento <select name="payment"><option value="pending">Aguardando pagamento</option><option value="paid">Pago</option><option value="canceled">Cancelado</option></select></label>
+      <label>Entrega <select name="delivery"><option value="waiting">Aguardando preparo</option><option value="preparing">Em preparo</option><option value="sent">Enviado</option><option value="delivered">Entregue</option><option value="issue">Problema na entrega</option><option value="canceled">Cancelado</option></select></label>
+      <label class="wide">Link de rastreio <input name="tracking" type="url" placeholder="https://..." maxlength="500"></label>
+      <fieldset class="wide"><legend>Produtos</legend><div id="order-items"></div><button type="button" class="btn light" id="add-order-item">+ Adicionar produto</button><p id="order-total"></p></fieldset>
+      <p class="wide" id="order-error" role="alert"></p>
+      <div class="wide editor-actions"><button class="btn" type="submit">Salvar pedido</button></div>
+    </form>
+  </dialog>
+  <dialog id="order-detail" aria-labelledby="order-detail-title"><div class="order-detail">
+    <div class="editor-head"><h2 id="order-detail-title">Pedido</h2><button class="btn light" type="button" id="close-order-detail">Fechar</button></div>
+    <div id="order-detail-body"></div>
+    <div class="order-share"><label>WhatsApp da dona <input id="owner-phone" type="tel" value="+55 11 97637-2101" inputmode="tel"></label><p id="share-status" role="status"></p><div class="order-actions"><button type="button" class="btn light" id="edit-order">Editar</button><button type="button" class="btn light" id="print-order-button">Imprimir A4</button><button type="button" class="btn green" id="send-order">Preparar WhatsApp</button></div></div>
+  </div></dialog>
+  <article id="print-order" hidden></article>
+  <script type="module" src="./admin.js?v=painel-4"></script>
 </body>
 </html>

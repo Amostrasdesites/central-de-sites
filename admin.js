@@ -1,6 +1,7 @@
-import {hideTools, showTools, syncProducts} from './panel-tools.js?v=painel-3';
-import {categories, element, imageSource, money, normalize, standardTags} from './catalog.js?v=painel-3';
-import {demo, deleteProduct, listProducts, login, logout, saveProduct, uploadPhoto} from './repository.js?v=painel-3';
+import {hideOrders,showOrders,updateOrderCatalog} from './orders.js?v=painel-4';
+import {hideTools, showTools, syncProducts} from './panel-tools.js?v=painel-4';
+import {categories, element, imageSource, money, normalize, standardTags} from './catalog.js?v=painel-4';
+import {demo, deleteProduct, listProducts, login, logout, saveProduct, uploadPhoto} from './repository.js?v=painel-4';
 
 const $ = selector => document.querySelector(selector);
 const form = $('#product-form');
@@ -55,6 +56,7 @@ async function refresh() {
   }));
   render();
   syncProducts(products);
+  updateOrderCatalog(products);
   if (demo) {
     $('#demo-preview').hidden = false;
     $('#demo-products').replaceChildren(...products.filter(product=>product.active).map(product=>element('li',product.name+' · '+money(product.price_cents))));
@@ -199,6 +201,7 @@ async function showCatalog() {
   $('#new').hidden = false;
   $('#logout').hidden = false;
   showTools();
+  void showOrders();
 }
 
 loginForm.addEventListener('submit', async event => {
@@ -223,6 +226,7 @@ function showLogin(message) {
   $('#rows').replaceChildren();
   form.reset();
   hideTools();
+  hideOrders();
   $('#login-status').textContent = message;
   loginForm.reset();
   loginForm.elements.username.focus();

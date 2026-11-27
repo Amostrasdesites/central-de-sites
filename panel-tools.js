@@ -93,6 +93,7 @@ export function syncProducts(products) {
   select.replaceChildren(...products.map(row=>new Option(row.name,row.id)));
   $('sale').querySelector('button').disabled=!products.length;
 }
+window.addEventListener('store-order-saved',()=>{ if (active) void rankings(revision); });
 $('sale').addEventListener('submit',event=>operation(event,$('sale-status'),async form=>{
   const {product,quantity}=Object.fromEntries(new FormData(form));
   await registerSale(product,Number(quantity));
