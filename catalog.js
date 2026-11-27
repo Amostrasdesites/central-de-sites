@@ -25,7 +25,7 @@ export const isPreviewHost = () =>
     location.pathname.startsWith('/Cantinho_do_Man-/'));
 
 export function imageSource(value, siteRoot) {
-  if (value.startsWith('blob:') && new URLSearchParams(location.search).get('demo') === '1') return value;
+  if (value.startsWith('blob:') && value.startsWith('blob:'+location.origin+'/')) return value;
   if (isPreviewHost() && /^data:image\/webp;base64,[\w+/=]+$/.test(value)) return value;
   if (/^assets\/img\/[\w-]+\.webp$/.test(value)) return new URL(value, siteRoot).href;
   try {

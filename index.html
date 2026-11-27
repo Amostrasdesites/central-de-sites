@@ -5,28 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
   <title>Central de Sites · Cantinho do Maná</title>
-  <link rel="stylesheet" href="./site.css?v=painel-2">
-  <link rel="stylesheet" href="./admin.css?v=painel-2">
+  <link rel="stylesheet" href="./site.css?v=painel-3">
+  <link rel="stylesheet" href="./admin.css?v=painel-3">
 </head>
 <body>
-  <header class="top">
-    <div class="wrap head">
-      <a class="brand" href="https://amostrasdesites.github.io/Cantinho_do_Man-/"><img src="https://amostrasdesites.github.io/Cantinho_do_Man-/assets/img/logo.webp" alt=""><div><strong>Central de Sites</strong><span>Cantinho do Maná</span></div></a>
-      <div class="head-actions"><a class="btn light" href="https://amostrasdesites.github.io/Cantinho_do_Man-/">Ver vitrine</a><button class="btn light" id="logout" hidden>Sair</button></div>
-    </div>
-  </header>
-  <main class="wrap admin">
-    <div class="admin-heading"><div><h1>Cantinho do Maná</h1><p>Gerencie o cardápio, as visitas e a aparência da vitrine.</p></div><button type="button" class="btn" id="new" hidden>+ Novo produto</button></div>
-    <p id="configuration-needed" class="notice" hidden>O login será liberado assim que o banco do Cantinho do Maná for conectado.</p>
-    <p id="example-banner" class="notice" hidden><strong>Demonstração.</strong> As alterações ficam nesta aba. A vitrine pública segue com seu catálogo atual. <a href="./">Voltar ao acesso</a></p>
-    <p id="status" role="status" aria-live="polite"></p>
-    <p id="example-link" class="example-link"><a class="btn" href="?demo=1">Abrir demonstração</a></p>
-    <form id="login" class="panel login" hidden>
-      <h2>Acesso ao painel</h2>
-      <label>E-mail <input name="email" type="email" autocomplete="username" required></label>
-      <label>Senha <input name="password" type="password" autocomplete="current-password" required></label>
-      <button class="btn green">Entrar</button>
-    </form>
+  <main id="gate" class="gate">
+    <section class="gate-intro">
+      <div class="wordmark"><span class="brand-symbol" aria-hidden="true">C</span> Central de Sites</div>
+      <div><h1>Gerencie seu site em um só lugar.</h1><p>Acompanhe visitas, edite produtos e personalize a vitrine pelo painel do seu projeto.</p></div>
+    </section>
+    <section class="gate-entry">
+      <form id="login" class="access-form">
+        <h2>Entrar na Central</h2>
+        <p>Entre com o usuário e a senha do seu projeto.</p>
+        <label>Usuário <input name="username" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" required></label>
+        <label>Senha <input name="password" type="password" autocomplete="current-password" required></label>
+        <button class="btn" type="submit">Entrar</button>
+        <p id="login-status" role="status"></p>
+      </form>
+    </section>
+  </main>
+  <div id="workspace" class="workspace" hidden>
+    <aside class="rail">
+      <div class="wordmark"><span class="brand-symbol" aria-hidden="true">C</span> Central de Sites</div>
+      <div class="project"><span>PROJETO</span><strong>Cantinho do Maná</strong></div>
+      <nav aria-label="Seções do painel"><a href="#reports">Visitas e vendas</a><a href="#catalog">Produtos</a><a href="#tools">Aparência</a></nav>
+      <div class="rail-actions"><a href="https://amostrasdesites.github.io/Cantinho_do_Man-/">Ver vitrine</a><button id="logout" type="button">Sair</button></div>
+    </aside>
+    <main class="admin dashboard">
+      <div class="admin-heading"><div><h1>Cantinho do Maná</h1><p>Visão geral do seu site</p></div><button type="button" class="btn" id="new" hidden>+ Novo produto</button></div>
+      <p id="example-banner" class="notice" hidden><strong>Conta de teste.</strong> As alterações ficam na aba. As métricas são ilustrativas.</p>
+      <p id="status" role="status" aria-live="polite"></p>
     <div id="reports" class="tool-grid" hidden>
       <section class="panel">
         <h2>Visitas</h2>
@@ -45,6 +54,7 @@
     </div>
     <section id="demo-preview" class="panel" hidden><h2>Prévia do cardápio</h2><p>Somente produtos marcados para aparecer na vitrine.</p><ul id="demo-products" class="demo-products"></ul></section>
     <div id="catalog" hidden>
+      <h2>Catálogo de produtos</h2>
       <div class="summary" id="summary"></div>
       <div class="panel">
         <div class="filters">
@@ -75,7 +85,8 @@
         <button class="btn green">Alterar senha</button><p id="password-status" role="status"></p>
       </form>
     </div>
-  </main>
+    </main>
+  </div>
   <dialog id="editor" aria-labelledby="editor-title">
     <form id="product-form" class="editor">
       <div class="editor-head"><h2 id="editor-title"></h2><button class="btn light" id="close" type="button" aria-label="Fechar ficha">Fechar</button></div>
@@ -91,6 +102,6 @@
       <div class="wide editor-actions"><button class="btn danger" type="button" id="delete" hidden>Excluir produto</button><button class="btn green" type="submit">Salvar produto</button></div>
     </form>
   </dialog>
-  <script type="module" src="./admin.js?v=painel-2"></script>
+  <script type="module" src="./admin.js?v=painel-3"></script>
 </body>
 </html>

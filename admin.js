@@ -1,6 +1,6 @@
-import {hideTools, showTools, syncProducts} from './panel-tools.js?v=painel-2';
-import {categories, element, imageSource, money, normalize, standardTags} from './catalog.js?v=painel-2';
-import {configured, demo, deleteProduct, listProducts, login, logout, saveProduct, uploadPhoto} from './repository.js?v=painel-2';
+import {hideTools, showTools, syncProducts} from './panel-tools.js?v=painel-3';
+import {categories, element, imageSource, money, normalize, standardTags} from './catalog.js?v=painel-3';
+import {demo, deleteProduct, listProducts, login, logout, saveProduct, uploadPhoto} from './repository.js?v=painel-3';
 
 const $ = selector => document.querySelector(selector);
 const form = $('#product-form');
@@ -192,7 +192,9 @@ $('#delete').addEventListener('click', event => {
 
 async function showCatalog() {
   await refresh();
-  loginForm.hidden = true;
+  $('#gate').hidden = true;
+  $('#workspace').hidden = false;
+  $('#example-banner').hidden = !demo;
   $('#catalog').hidden = false;
   $('#new').hidden = false;
   $('#logout').hidden = false;
@@ -202,37 +204,32 @@ async function showCatalog() {
 loginForm.addEventListener('submit', async event => {
   event.preventDefault();
   event.submitter.disabled = true;
-  status.textContent = '';
+  $('#login-status').textContent = '';
   try {
-    await login(loginForm.elements.email.value, loginForm.elements.password.value);
+    await login(loginForm.elements.username.value, loginForm.elements.password.value);
     loginForm.reset();
     await showCatalog();
-  } catch (error) { status.textContent = error.message; }
+  } catch (error) { $('#login-status').textContent = error.message; }
   finally { event.submitter.disabled = false; }
 });
 function showLogin(message) {
   if (editor.open) editor.close();
-  $('#catalog').hidden = $('#new').hidden = $('#logout').hidden = true;
+  $('#catalog').hidden = $('#new').hidden = $('#demo-preview').hidden = true;
+  $('#workspace').hidden = true;
+  $('#gate').hidden = false;
+  $('#demo-products').replaceChildren();
   products = [];
   current = null;
   $('#rows').replaceChildren();
   form.reset();
   hideTools();
-  loginForm.hidden = false;
-  status.textContent = message;
+  $('#login-status').textContent = message;
+  loginForm.reset();
+  loginForm.elements.username.focus();
 }
 window.addEventListener('catalog-session-ended', event=>showLogin(event.detail || 'Entre novamente para continuar.'));
 $('#logout').addEventListener('click', async () => {
   showLogin('Sessão encerrada.');
   try { await logout(); }
-  catch { status.textContent = 'Sessão encerrada neste navegador.'; }
+  catch { $('#login-status').textContent = 'Sessão encerrada neste navegador.'; }
 });
-if (demo) {
-  $('#example-banner').hidden = false;
-  $('#example-link').hidden = true;
-  showCatalog().then(() => { $('#logout').hidden = true; }).catch(error=>{status.textContent=error.message;});
-} else if (configured) {
-  loginForm.hidden = false;
-} else {
-  $('#configuration-needed').hidden = false;
-}

@@ -2,7 +2,7 @@ const {config} = await import("https://amostrasdesites.github.io/Cantinho_do_Man
 import {originalCatalog} from './catalog-data.js';
 
 export const configured = Boolean(config.supabaseUrl && config.publishableKey);
-export const demo = new URLSearchParams(location.search).get('demo') === '1';
+export let demo = false;
 let sample;
 let sampleSales = [];
 let sampleTheme = {primary_color:'#942c20',secondary_color:'#2d482f',font:'system-ui'};
@@ -34,7 +34,14 @@ async function adminRequest(path, method, body, prefer) {
   return request(path, method, body, session.access_token, prefer);
 }
 
-export async function login(email, password) {
+export async function login(username, password) {
+  const email = username.trim().toLowerCase();
+  if (email === 'mana') {
+    if (password !== '202050') throw new Error('Usuário ou senha incorretos.');
+    demo = true;
+    return;
+  }
+  if (!configured || !email.includes('@')) throw new Error('Usuário ou senha incorretos.');
   const token = await request('/auth/v1/token?grant_type=password', 'POST', {email, password});
   session = {...token, expiresAt: Date.now() + token.expires_in * 1000};
   try {
@@ -48,6 +55,10 @@ export async function login(email, password) {
 }
 
 export async function logout() {
+  demo = false;
+  sample = undefined;
+  sampleSales = [];
+  sampleTheme = {primary_color:'#942c20',secondary_color:'#2d482f',font:'system-ui'};
   const token = session?.access_token;
   session = null;
   if (token) await request('/auth/v1/logout', 'POST', {}, token);
